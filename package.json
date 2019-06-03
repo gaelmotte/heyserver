@@ -1,0 +1,26 @@
+{
+  "name": "heyserver",
+  "version": "1.0.0",
+  "description": "Some pet project to prove SalesForce Integrations capabilities",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gruck/heyserver.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Gruck/heyserver/issues"
+  },
+  "homepage": "https://github.com/Gruck/heyserver#readme",
+  "dependencies": {
+    "json-server": "^0.15.0"
+  },
+  "engines": {
+    "node": "10.x"
+  }
+}

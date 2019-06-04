@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/Gruck/heyserver#readme",
   "dependencies": {
-    "json-server": "^0.15.0"
+    "json-server": "^0.15.0",
+    "npm": "^6.9.0"
   },
   "engines": {
     "node": "10.x"

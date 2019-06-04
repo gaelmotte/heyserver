@@ -1,1 +1,14 @@
-{}
+{
+  "customer": [
+    {
+      "id": 1,
+      "username": "gael",
+      "password": "test"
+    },
+    {
+      "username": "gael2",
+      "password": "test2",
+      "id": 2
+    }
+  ]
+}

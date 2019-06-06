@@ -96,6 +96,61 @@ server.use((req, res, next) => {
 	}
 });
 
+var SFOauth = {
+	instanceUrl : 'https://connect-java-1397-dev-ed.lightning.force.com',
+  accessToken : null,//'<your Salesforrce OAuth2 access token is here>',
+  refreshToken : null//'<your Salesforce OAuth2 refresh token is here>'
+}
+
+var oauth2 = new jsforce.OAuth2({
+  // you can change loginUrl to connect to sandbox or prerelease env.
+  // loginUrl : 'https://test.salesforce.com',
+  clientId : '3MVG9sSN_PMn8tjS0IuFk19MciwVF6rNaUEpyDYe3KFZ.YpXdjaArA7FXKRKhB2WOgw2MRcqFV2UDpv5P9RAA',
+  clientSecret : '9C872D467C33CF51CC2C6A761E37C4E95DA9F9253E9A1C39E2FDCC719E38A36A',
+  redirectUri : 'https://heyserver-stg.herokuapp.com/oauth2/callback'
+});
+
+var jsforce = require('jsforce');
+var conn = new jsforce.Connection({
+  oauth2 ,
+  instanceUrl : SFOauth.instanceUrl,
+  accessToken : SFOauth.accessToken,
+  refreshToken : SFOauth.refreshToken
+});
+conn.on("refresh", function(accessToken, res) {
+  // Refresh event will be fired when renewed access token
+  // to store it in your storage for next request
+  console.log("refresh access token", accessToken);
+  SFOauth.accessToken = accessToken;
+});
+
+server.get('/oauth2/auth', function(req, res) {
+  res.redirect(oauth2.getAuthorizationUrl({ scope : 'api id web' }));
+});
+
+//
+// Pass received authorization code and get access token
+//
+server.get('/oauth2/callback', function(req, res) {
+  var conn = new jsforce.Connection({ oauth2 : oauth2 });
+  var code = req.param('code');
+  conn.authorize(code, function(err, userInfo) {
+    if (err) { return console.error(err); }
+    // Now you can get the access token, refresh token, and instance URL information.
+    // Save them to establish connection next time.
+    console.log(conn.accessToken);
+    SFOauth.accessToken = conn.accessToken;
+    console.log(conn.refreshToken);
+    SFOauth.refreshToken = conn.refreshToken;
+    console.log(conn.instanceUrl);
+    SFOauth.instanceUrl = conn.instanceUrl;
+    console.log("User ID: " + userInfo.id);
+    console.log("Org ID: " + userInfo.organizationId);
+    // ...
+    res.send('success'); // or your desired response
+  });
+});
+
 
 server.use(router)
 server.listen(process.env.PORT || 3000, () => {

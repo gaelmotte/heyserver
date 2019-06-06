@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Gruck/heyserver#readme",
   "dependencies": {
+    "jsforce": "^1.9.1",
     "json-server": "^0.15.0",
     "npm": "^6.9.0"
   },

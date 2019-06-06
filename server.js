@@ -95,6 +95,8 @@ server.use((req, res, next) => {
 
 	}
 });
+var jsforce = require('jsforce');
+
 
 var SFOauth = {
 	instanceUrl : 'https://connect-java-1397-dev-ed.lightning.force.com',
@@ -110,7 +112,7 @@ var oauth2 = new jsforce.OAuth2({
   redirectUri : 'https://heyserver-stg.herokuapp.com/oauth2/callback'
 });
 
-var jsforce = require('jsforce');
+
 var conn = new jsforce.Connection({
   oauth2 ,
   instanceUrl : SFOauth.instanceUrl,

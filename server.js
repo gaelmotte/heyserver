@@ -92,6 +92,32 @@ router.use((req, res, next) => {
 	}
 });
 
+function secureRoute(resource){
+	return function (req, res, next) {
+		let elem = router.db.get(resource).filter({"id":parseInt(req.params.id)}).nth(0).value();
+		if(elem && elem.customer_id === req.customer.id){
+			next()
+		}else{
+			res.sendStatus(403)
+		}
+	}
+}      
+
+router.patch("/api/leads/:id", secureRoute("leads"));
+router.patch("/api/opportunities/:id", secureRoute("opportunities"));
+router.patch("/api/events/:id", secureRoute("events"));
+
+router.put("/api/leads/:id", secureRoute("leads"));
+router.put("/api/opportunities/:id", secureRoute("opportunities"));
+router.put("/api/events/:id", secureRoute("events"));
+
+router.delete("/api/leads/:id", secureRoute("leads"));
+router.delete("/api/opportunities/:id", secureRoute("opportunities"));
+router.delete("/api/events/:id", secureRoute("events"));
+
+
+
+
 var jsforce = require('jsforce');
 
 

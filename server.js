@@ -98,7 +98,7 @@ var jsforce = require('jsforce');
 
 
 var SFOauth = {
-	instanceUrl : 'https://connect-java-1397-dev-ed.lightning.force.com',
+	instanceUrl : 'https://heydemo-dev-ed.lightning.force.com',
   accessToken : null,//'<your Salesforrce OAuth2 access token is here>',
   refreshToken : null//'<your Salesforce OAuth2 refresh token is here>'
 }

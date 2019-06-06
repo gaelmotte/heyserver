@@ -126,7 +126,7 @@ conn.on("refresh", function(accessToken, res) {
 });
 
 server.get('/oauth2/auth', function(req, res) {
-  res.redirect(oauth2.getAuthorizationUrl({ scope : 'api id web' }));
+  res.redirect(oauth2.getAuthorizationUrl({ scope : 'api' }));
 });
 
 //

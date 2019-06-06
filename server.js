@@ -41,8 +41,7 @@ server.use(jsonServer.bodyParser)
 
 
 /* AuthN middleware */
-/*
-server.use((req, res, next) => {
+router.use((req, res, next) => {
 	if (req.headers.authorization) { 
 
 		let username, password;
@@ -67,8 +66,7 @@ server.use((req, res, next) => {
 })
 
 /* AuthZ middleware */
-/*
-server.use((req, res, next) => {
+router.use((req, res, next) => {
 	if(!req.customer){
 		next()
 	}else{
@@ -93,7 +91,7 @@ server.use((req, res, next) => {
 		}
 	}
 });
-*/
+
 var jsforce = require('jsforce');
 
 

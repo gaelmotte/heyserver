@@ -39,7 +39,9 @@ server.use(middlewares)
 
 server.use(jsonServer.bodyParser)
 
+
 /* AuthN middleware */
+/*
 server.use((req, res, next) => {
 	if (req.headers.authorization) { 
 
@@ -65,6 +67,7 @@ server.use((req, res, next) => {
 })
 
 /* AuthZ middleware */
+/*
 server.use((req, res, next) => {
 	if(!req.customer){
 		next()
@@ -88,13 +91,9 @@ server.use((req, res, next) => {
 			next()
 
 		}
-
-
-		
-
-
 	}
 });
+*/
 var jsforce = require('jsforce');
 
 

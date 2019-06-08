@@ -1,7 +1,7 @@
 module.exports = function(server, router){
     
     /* AuthN middleware */
-    server.use((req, res, next) => {
+    server.use("/api",(req, res, next) => {
         if (req.headers.authorization) { 
 
 

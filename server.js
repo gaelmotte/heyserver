@@ -60,15 +60,6 @@ server.use("/api",router)
 
 
 
-
-/*
-var SFOauth = {
-	instanceUrl : 'https://heydemo-dev-ed.lightning.force.com',
-  accessToken : null,//'<your Salesforrce OAuth2 access token is here>',
-  refreshToken : null//'<your Salesforce OAuth2 refresh token is here>'
-}
-*/
-
 var oauth2 = new jsforce.OAuth2({
   // you can change loginUrl to connect to sandbox or prerelease env.
   // loginUrl : 'https://test.salesforce.com',
@@ -77,20 +68,6 @@ var oauth2 = new jsforce.OAuth2({
   redirectUri : 'https://heyserver-stg.herokuapp.com/oauth2/callback'
 });
 
-/*
-var conn = new jsforce.Connection({
-  oauth2 ,
-  instanceUrl : SFOauth.instanceUrl,
-  accessToken : SFOauth.accessToken,
-  refreshToken : SFOauth.refreshToken
-});
-conn.on("refresh", function(accessToken, res) {
-  // Refresh event will be fired when renewed access token
-  // to store it in your storage for next request
-  console.log("refresh access token", accessToken);
-  SFOauth.accessToken = accessToken;
-});
-*/
 
 server.get('/oauth2/auth/:oid', function(req, res) {
 	let state = randomstring.generate()

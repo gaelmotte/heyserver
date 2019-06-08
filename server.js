@@ -1,16 +1,31 @@
 // server.js
 const jsonServer = require('json-server')
+const securitysetup = require('./securitysetup')
+
 const server = jsonServer.create()
 const middlewares = jsonServer.defaults()
 const router = jsonServer.router({
-	"customers":[
+	"organization":[
 		{
 			"id":0,
-			"username":"cust0",
-			"password":"cust0"
+			"orgName":"StartUp0"
+			//SFDC related info goes here
+		},
+		{
+			"id":1,
+			"orgName":"StartUp1"
+			//SFDC related info goes here
 		}
 	],
-	"administrators":[
+	"user":[
+		{
+			"id":0,
+			"username":"user0",
+			"password":"user0",
+			"organizationId":0
+		}
+	],
+	"administrator":[
 		{
 			"id":0,
 			"username":"root",
@@ -20,12 +35,12 @@ const router = jsonServer.router({
 	"leads":[
 		{
 			"id":0,
-			"customer_id":0,
+			"organizationId":0,
 			"name":"lead0"
 		},
 		{
 			"id":1,
-			"customer_id":1,
+			"organizationId":1,
 			"name":"lead1"
 		}
 	],
@@ -36,82 +51,8 @@ const router = jsonServer.router({
 
 
 server.use(middlewares)
-
 server.use(jsonServer.bodyParser)
-
-
-/* AuthN middleware */
-server.use("/api/*",(req, res, next) => {
-	if (req.headers.authorization) { 
-
-
-		let username, password;
-		[username, password] = (new Buffer(req.headers.authorization.split(" ")[1], 'base64').toString()).split(":");
-		let administrator = router.db.get("administrators").value().filter( u => u.username === username && u.password === password)[0];
-
-		if(administrator){
-			req.administrator = administrator
-			console.log("acting as aadministrator", administrator)
-			next()
-		}else{
-			let customer = router.db.get("customers").value().filter( u => u.username === username && u.password === password)[0];
-			if(customer){
-				req.customer = customer
-				console.log("acting as customer", customer)
-				next()
-			}else{
-				res.sendStatus(401)
-			}
-		}
-	} else {
-		res.sendStatus(401)
-	}
-})
-
-/* AuthZ middleware */
-server.use("/api/*",(req, res, next) => {
-	if(!req.customer){
-		next()
-	}else{
-
-
-		
-		if(req.method === "GET"){//add a filter in get queries
-			console.log("query : ",req.query)
-			req.query.customer_id = ""+req.customer.id
-
-			console.log("query : ",req.query)
-			next()
-
-		}else{//prevent access if not owned by correct customer
-
-			//force appending customer_id
-			req.body.customer_id = req.customer.id
-
-			next()
-
-		}
-	}
-});
-
-function secureRoute(resource){
-	return function (req, res, next) {
-		console.log("secrutity Middleware executed")
-		let elem = router.db.get(resource).filter({"id":parseInt(req.params.id)}).nth(0).value();
-		if(elem && elem.customer_id === req.customer.id){
-			next()
-		}else{
-			res.sendStatus(403)
-		}
-	}
-}      
-
-server.all("/api/leads/:id", secureRoute("leads"));
-server.all("/api/opportunities/:id", secureRoute("opportunities"));
-server.all("/api/events/:id", secureRoute("events"));
-
-
-
+securitysetup(server,router)
 server.use("/api",router)
 
 

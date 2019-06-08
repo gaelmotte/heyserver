@@ -30,8 +30,8 @@ const router = jsonServer.router({
 	"administrator":[
 		{
 			"id":0,
-			"username":"root",
-			"password":"root"
+			"username":process.env.ADMIN_USERNAME,
+			"password":process.env.ADMIN_PASSWORD
 		}
 	],
 	"leads":[
@@ -63,9 +63,9 @@ server.use("/api",router)
 var oauth2 = new jsforce.OAuth2({
   // you can change loginUrl to connect to sandbox or prerelease env.
   // loginUrl : 'https://test.salesforce.com',
-  clientId : '3MVG9sSN_PMn8tjS0IuFk19MciwVF6rNaUEpyDYe3KFZ.YpXdjaArA7FXKRKhB2WOgw2MRcqFV2UDpv5P9RAA',
-  clientSecret : '9C872D467C33CF51CC2C6A761E37C4E95DA9F9253E9A1C39E2FDCC719E38A36A',
-  redirectUri : 'https://heyserver-stg.herokuapp.com/oauth2/callback'
+  clientId : process.env.OAUTH_CLIENTID,
+  clientSecret : process.env.OAUTH_CLIENTSECRET,
+  redirectUri : process.env.APP_DOMAIN+'/oauth2/callback'
 });
 
 

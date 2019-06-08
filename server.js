@@ -94,7 +94,7 @@ conn.on("refresh", function(accessToken, res) {
 
 server.get('/oauth2/auth/:oid', function(req, res) {
 	let state = randomstring.generate()
-	console.log(router.db.get("organization").filter({id: parseInt(req.params.oid)}).nth(0).assign({sfdc_oauthState:state}).write())
+	console.log(router.db.get("organization").filter({"id": parseInt(req.params.oid)}).nth(0).assign({sfdc_oauthState:state}).write())
 	res.redirect(oauth2.getAuthorizationUrl({ scope : 'api' })+"&state="+state);
 });
 
@@ -125,7 +125,7 @@ server.get('/oauth2/callback', function(req, res) {
 });
 
 server.get("/test/:oid",function(req,res){
-	let organization = router.db.get("organization").filter({id: req.params.oid}).nth(0).value();
+	let organization = router.db.get("organization").filter({"id": parseInt(req.params.oid)}).nth(0).value();
 	var conn = new jsforce.Connection({
 		oauth2 ,
 		instanceUrl : organization.sfdc_instanceUrl,

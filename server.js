@@ -124,7 +124,7 @@ server.get('/oauth2/callback', function(req, res) {
   });
 });
 
-server.get("test/:oid",function(req,res){
+server.get("/test/:oid",function(req,res){
 	let organization = router.db.get("organization").filter({id: req.params.oid}).nth(0).value();
 	var conn = new jsforce.Connection({
 		oauth2 ,

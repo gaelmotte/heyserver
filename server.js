@@ -110,14 +110,7 @@ server.get('/oauth2/callback', function(req, res) {
   conn.authorize(code, function(err, userInfo) {
     if (err) { return console.error(err); }
     // Now you can get the access token, refresh token, and instance URL information.
-    // Save them to establish connection next time.
-    console.log(conn.accessToken);
-    SFOauth.accessToken = conn.accessToken;
-    console.log(conn.refreshToken);
-    SFOauth.refreshToken = conn.refreshToken;
-    console.log(conn.instanceUrl);
-	SFOauth.instanceUrl = conn.instanceUrl;
-	
+    // Save them to establish connection next time.	
 	router.db.get("organization").filter({sfdc_oauthState:state}).nth(0).assign({
 		sfdc_instanceUrl : conn.instanceUrl,
 		sfdc_refreshToken : conn.refreshToken,

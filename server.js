@@ -41,8 +41,9 @@ server.use(jsonServer.bodyParser)
 
 
 /* AuthN middleware */
-router.use((req, res, next) => {
+server.use("/api/*",(req, res, next) => {
 	if (req.headers.authorization) { 
+
 
 		let username, password;
 		[username, password] = (new Buffer(req.headers.authorization.split(" ")[1], 'base64').toString()).split(":");
@@ -50,11 +51,13 @@ router.use((req, res, next) => {
 
 		if(administrator){
 			req.administrator = administrator
+			console.log("acting as aadministrator", administrator)
 			next()
 		}else{
 			let customer = router.db.get("customers").value().filter( u => u.username === username && u.password === password)[0];
 			if(customer){
 				req.customer = customer
+				console.log("acting as customer", customer)
 				next()
 			}else{
 				res.sendStatus(401)
@@ -66,7 +69,7 @@ router.use((req, res, next) => {
 })
 
 /* AuthZ middleware */
-router.use((req, res, next) => {
+server.use("/api/*",(req, res, next) => {
 	if(!req.customer){
 		next()
 	}else{
@@ -81,7 +84,6 @@ router.use((req, res, next) => {
 			next()
 
 		}else{//prevent access if not owned by correct customer
-			//TODO
 
 			//force appending customer_id
 			req.body.customer_id = req.customer.id
@@ -94,6 +96,7 @@ router.use((req, res, next) => {
 
 function secureRoute(resource){
 	return function (req, res, next) {
+		console.log("secrutity Middleware executed")
 		let elem = router.db.get(resource).filter({"id":parseInt(req.params.id)}).nth(0).value();
 		if(elem && elem.customer_id === req.customer.id){
 			next()
@@ -103,18 +106,13 @@ function secureRoute(resource){
 	}
 }      
 
-router.patch("/api/leads/:id", secureRoute("leads"));
-router.patch("/api/opportunities/:id", secureRoute("opportunities"));
-router.patch("/api/events/:id", secureRoute("events"));
+server.all("/api/leads/:id", secureRoute("leads"));
+server.all("/api/opportunities/:id", secureRoute("opportunities"));
+server.all("/api/events/:id", secureRoute("events"));
 
-router.put("/api/leads/:id", secureRoute("leads"));
-router.put("/api/opportunities/:id", secureRoute("opportunities"));
-router.put("/api/events/:id", secureRoute("events"));
 
-router.delete("/api/leads/:id", secureRoute("leads"));
-router.delete("/api/opportunities/:id", secureRoute("opportunities"));
-router.delete("/api/events/:id", secureRoute("events"));
 
+server.use("/api",router)
 
 
 
@@ -177,7 +175,7 @@ server.get('/oauth2/callback', function(req, res) {
 });
 
 
-server.use(router)
+
 server.listen(process.env.PORT || 3000, () => {
   console.log('JSON Server is running on ', process.env.PORT || 3000)
 })

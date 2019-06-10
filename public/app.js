@@ -116,7 +116,7 @@ $(function() {
             form.find(".output").text(JSON.stringify(data));
 
             // redirect to salesforce oauth page
-            //window.setTimeout(()=> window.location.replace(data.redirectTo) , 1000)
+            window.setTimeout(()=> window.location.replace(data.redirectTo) , 1000)
         });
 
     })

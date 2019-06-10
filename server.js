@@ -136,8 +136,8 @@ server.get('/oauth2/auth', function(req, res) {
 //
 server.get('/oauth2/callback', function(req, res) {
   var conn = new jsforce.Connection({ oauth2 : oauth2 });
-  var code = req.param('code');
-  var state = req.param("state")
+  var code = req.params.code;
+  var state = req.params.state;
   console.log(state)
 
   conn.authorize(code, function(err, userInfo) {
@@ -166,7 +166,7 @@ server.get('/oauth2/callback', function(req, res) {
 });
 
 server.get("/test",function(req,res){
-	let organization = router.db.get("organization").find({"id": req.organization.id}).nth(0).value();
+	let organization = router.db.get("organization").find({"id": req.organization.id}).value();
 	var conn = new jsforce.Connection({
 		oauth2 ,
 		instanceUrl : organization.sfdc_instanceUrl,

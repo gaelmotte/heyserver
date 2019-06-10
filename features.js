@@ -44,8 +44,8 @@ module.exports = function(server, router, ss, oauth){
     server.get("/installpackage", (req,res)=>{
 
         let a = router.db.get("organization").find({id:req.organization.id}).value()
-        a.ncUsername = organization.id; 
-        a.ncPassword = randomstring.generate(32)
+        a.ncUsername = req.organization.id; 
+        a.ncPassword = randomstring.generate(32);
         router.db.get("organization").find({id:req.organization.id}).assign(a).write()
 
         res.send({

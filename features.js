@@ -5,7 +5,7 @@ module.exports = function(server, router, ss, oauth){
     
     server.get("/test",function(req,res){
         
-        var conn = getConnection(req.organization);
+        var conn = oauth.getConnection(req.organization);
 
         conn.identity(function(err, res2) {
             if (err) { return console.error(err); }

@@ -35,10 +35,6 @@ module.exports = function(server, router, ss){
 
     
     server.use("/oauth2/auth",ss.authNMiddleware)
-    server.use("/test",ss.authNMiddleware)
-
-
-
     server.get('/oauth2/auth', function(req, res) {
 
         let state = randomstring.generate()
@@ -57,50 +53,36 @@ module.exports = function(server, router, ss){
     // Pass received authorization code and get access token
     //
     server.get('/oauth2/callback', function(req, res) {
-    var conn = new jsforce.Connection({ oauth2 : oauth2 });
-    var code = req.query.code;
-    var state = req.query.state;
-    console.log(state)
+        var conn = new jsforce.Connection({ oauth2 : oauth2 });
+        var code = req.query.code;
+        var state = req.query.state;
+        console.log(state)
 
-    conn.authorize(code, function(err, userInfo) {
-        if (err) { return console.error(err); }
-        // Now you can get the access token, refresh token, and instance URL information.
-        // Save them to establish connection next time.	
-        console.log("registering a SFDC instance for org ")
-        let a = router.db.get("organization").find({"sfdc_oauthState":state}).value()
-        console.log("organizaiton to update", a)
-        if(a){
-            delete a.sfdc_oauthState
-            a.sfdc_instanceUrl = conn.instanceUrl
-            a.sfdc_refreshToken = conn.refreshToken
-            a.sfdc_accessToken = conn.accessToken
-            router.db.get("organization").find({"sfdc_oauthState":state}).assign(a).write()
-            
-            console.log("User ID: " + userInfo.id);
-            console.log("Org ID: " + userInfo.organizationId);
-            // ...
-            res.redirect("/"); // or your desired response
-        }else{
-            res.status(500).send("COULDN'T FIND ORG WITH SUCH STATE")
-        }
-
-    });
-    });
-
-    server.get("/test",function(req,res){
-        
-        var conn = getConnection(req.organization);
-
-        conn.identity(function(err, res2) {
+        conn.authorize(code, function(err, userInfo) {
             if (err) { return console.error(err); }
-            res.send({
-                "user_id" : res2.user_id,
-                "organization_id" : res2.organization_id,
-                "username" : res2.username,
-                "display_name" : res2.display_name
-            })
+            // Now you can get the access token, refresh token, and instance URL information.
+            // Save them to establish connection next time.	
+            console.log("registering a SFDC instance for org ")
+            let a = router.db.get("organization").find({"sfdc_oauthState":state}).value()
+            console.log("organizaiton to update", a)
+            if(a){
+                delete a.sfdc_oauthState
+                a.sfdc_instanceUrl = conn.instanceUrl
+                a.sfdc_refreshToken = conn.refreshToken
+                a.sfdc_accessToken = conn.accessToken
+                router.db.get("organization").find({"sfdc_oauthState":state}).assign(a).write()
+                
+                console.log("User ID: " + userInfo.id);
+                console.log("Org ID: " + userInfo.organizationId);
+                // ...
+                res.redirect("/"); // or your desired response
+            }else{
+                res.status(500).send("COULDN'T FIND ORG WITH SUCH STATE")
+            }
+
         });
-    })
+    });
+
 
     
 

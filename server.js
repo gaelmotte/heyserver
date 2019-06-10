@@ -2,6 +2,7 @@
 const jsonServer = require('json-server')
 const securitysetup = require('./securitysetup')
 const sfdcoauth = require("./sfdcoauth")
+const features = require("./features")
 
 
 const server = jsonServer.create()
@@ -57,6 +58,8 @@ server.use(jsonServer.bodyParser)
 let ss = securitysetup(server,router)
 
 let oauth = sfdcoauth(server,router,ss)
+
+let f = features(server, router, ss, oauth)
 
 server.use("/api",router)
 

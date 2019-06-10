@@ -120,7 +120,7 @@ server.use("/test",authNMiddleware)
 server.get('/oauth2/auth', function(req, res) {
 
 	let state = randomstring.generate()
-	console.log(router.db.get("organization").filter({"id": parseInt(req.organization.id)}).nth(0).assign({sfdc_oauthState:state}).write())
+	console.log(router.db.get("organization").filter({"id": parseInt(req.organization.id)}).nth(0).set("sfdc_oauthState",state).write())
 	res.send({
 		"organization_id" : req.organization.id,
 		"redirectTo":oauth2.getAuthorizationUrl({ scope : 'api' })+"&state="+state

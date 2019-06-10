@@ -1,5 +1,7 @@
 /*this module will describe custom routes or middleware on /api to interract with the salesforce instance */
 
+const randomstring = require('randomstring')
+
 module.exports = function(server, router, ss, oauth){
 
     server.use("/me",ss.authNMiddleware)

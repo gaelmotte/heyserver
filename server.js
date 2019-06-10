@@ -136,8 +136,8 @@ server.get('/oauth2/auth', function(req, res) {
 //
 server.get('/oauth2/callback', function(req, res) {
   var conn = new jsforce.Connection({ oauth2 : oauth2 });
-  var code = req.params.code;
-  var state = req.params.state;
+  var code = req.query.code;
+  var state = req.query.state;
   console.log(state)
 
   conn.authorize(code, function(err, userInfo) {

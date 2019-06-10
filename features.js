@@ -42,6 +42,16 @@ module.exports = function(server, router, ss, oauth){
 
     server.use("/installpackage",ss.authNMiddleware)
     server.get("/installpackage", (req,res)=>{
-        res.redirect(req.organization.sfdc_instanceUrl+"/packagingSetupUI/ipLanding.app?apvId="+ process.env.PACKAGE_ID)
+
+        let a = router.db.get("organization").find({id:req.organization.id}).value()
+        a.ncUsername = organization.id; 
+        a.ncPassword = randomstring.generate(32)
+        router.db.get("organization").find({id:req.organization.id}).assign(a).write()
+
+        res.send({
+            "ncUsername" : req.organization.ncUsername,
+            "ncPassword" : req.organization.ncPassword,
+            "redirectTo":req.organization.sfdc_instanceUrl+"/packagingSetupUI/ipLanding.app?apvId="+ process.env.PACKAGE_ID,
+        });
     })
 }

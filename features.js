@@ -39,4 +39,9 @@ module.exports = function(server, router, ss, oauth){
             })
         });
     })
+
+    server.use("/installpackage",ss.authNMiddleware)
+    server.get("/installpackage", (req,res)=>{
+        res.redirect(req.organization.sfdc_instanceUrl+"/packagingSetupUI/ipLanding.app?apvId="+ process.env.PACKAGE_ID)
+    })
 }

@@ -120,10 +120,14 @@ server.use("/test",authNMiddleware)
 server.get('/oauth2/auth', function(req, res) {
 
 	let state = randomstring.generate()
-	console.log(router.db.get("organization").find({"id": parseInt(req.organization.id)}).nth(0).set("sfdc_oauthState",state).write())
+
+	let a = router.db.get("organization").find({id:req.organization.id}).value()
+	a.sfdc_oauthState = state;
+	router.db.get("organization").find({id:req.organization.id}).assign(a).write()
+
 	res.send({
 		"organization_id" : req.organization.id,
-		"redirectTo":oauth2.getAuthorizationUrl({ scope : 'api' })+"&state="+state
+		"redirectTo":oauth2.getAuthorizationUrl({ scope : 'api' })+"&state="+state,
 	});
 });
 
@@ -140,22 +144,28 @@ server.get('/oauth2/callback', function(req, res) {
     if (err) { return console.error(err); }
     // Now you can get the access token, refresh token, and instance URL information.
 	// Save them to establish connection next time.	
-	console.log("registering a SFDC instance for org ", router.db.get("organization").filter({sfdc_oauthState:state}).nth(0).value())
-	router.db.get("organization").find({sfdc_oauthState:state}).nth(0).assign({
-		sfdc_instanceUrl : conn.instanceUrl,
-		sfdc_refreshToken : conn.refreshToken,
-		sfdc_accessToken: conn.accessToken
-	}).write()
+	console.log("registering a SFDC instance for org ", router.db.get("organization").find({"sfdc_oauthState":state}).nth(0).value())
+	let a = router.db.get("organization").find({sfdc_oauthState:state}).nth(0).value()
+	if(a){
+		delete a.sfdc_oauthState
+		a.sfdc_instanceUrl = conn.instanceUrl
+		a.sfdc_refreshToken = conn.refreshToken
+		a.sfdc_accessToken = conn.accessToken
+		router.db.get("organization").find({sfdc_oauthState:state}).nth(0).assign(a).write()
+		
+		console.log("User ID: " + userInfo.id);
+		console.log("Org ID: " + userInfo.organizationId);
+		// ...
+		res.redirect("/"); // or your desired response
+	}else{
+		res.status(500).send("COULDN'T FIND ORG WITH SUCH STATE")
+	}
 
-    console.log("User ID: " + userInfo.id);
-    console.log("Org ID: " + userInfo.organizationId);
-    // ...
-    res.redirect("/"); // or your desired response
   });
 });
 
 server.get("/test",function(req,res){
-	let organization = router.db.get("organization").filter({"id": parseInt(req.params.oid)}).nth(0).value();
+	let organization = router.db.get("organization").find({"id": req.organization.id}).nth(0).value();
 	var conn = new jsforce.Connection({
 		oauth2 ,
 		instanceUrl : organization.sfdc_instanceUrl,
@@ -199,6 +209,19 @@ server.get("/me",function (req,res){
 		res.sendStatus(401)
 	}
 });
+
+server.get("/raw/:r",(req,res)=>{
+	res.send(router.db.get(req.params.r).value());
+})
+
+server.get("/edit/:r/:id",(req,res)=>{
+
+	let a = router.db.get(req.params.r).find({id:req.params.id}).value()
+	a.somethind = "lol";
+	router.db.get(req.params.r).find({id:req.params.id}).assign(a).write()
+	
+	res.send(router.db.get(req.params.r).value());
+})
 
 server.listen(process.env.PORT || 3000, () => {
   console.log('JSON Server is running on ', process.env.PORT || 3000)

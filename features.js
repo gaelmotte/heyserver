@@ -16,7 +16,7 @@ module.exports = function(server, router, ss, oauth){
         }else if(req.user || req.organization){
             res.send({
                 "isAdmin":false,
-                "username":req.user.username,
+                "username":req.user ? req.user.username : null,
                 "organization_id":req.organization.id,
                 "sfdc_instanceUrl":req.organization.sfdc_instanceUrl
             })

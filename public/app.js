@@ -35,8 +35,12 @@ $(function() {
            $("#userInfo").toggleClass("slds-hide");
            $("#loginForm").toggleClass("slds-hide");
 
-           // show related features
-           $(".adminFeature").toggleClass("slds-hide")
+            // show related features
+            if(data.isAdmin){
+                $(".adminFeature").toggleClass("slds-hide")
+            }else{
+                $(".userFeature").toggleClass("slds-hide")
+            }
         })
         
     }) 
@@ -50,6 +54,9 @@ $(function() {
         //show login form
         $("#userInfo").toggleClass("slds-hide");
         $("#loginForm").toggleClass("slds-hide");
+
+        //reset forms
+        //TODO
 
     })
 
@@ -72,7 +79,7 @@ $(function() {
 
             // Provision default user
             $.ajax({
-                url:"/api/user",
+                url:"/api/organization/"+data.id+"/user",
                 method:form.attr('method'),
                 dataType: 'json',
                 beforeSend:function (xhr) {
@@ -86,6 +93,30 @@ $(function() {
                 console.log(data)
                 form.find(".output").text(form.find(".output").text()+JSON.stringify(data));                
             });
+        });
+
+    })
+
+    
+    /* login to Salesforce Org */
+    $("#sfdcLoginForm").submit(function(event){
+        event.preventDefault();
+        let form = $(this);
+
+        $.ajax({
+            url:form.attr('action'),
+            method:form.attr('method'),
+            dataType: 'json',
+            beforeSend:function (xhr) {
+                xhr.setRequestHeader ("Authorization", appState.authHeader);
+            },
+            data : form.serialize()
+        }).done(data =>{
+            console.log(data)
+            form.find(".output").text(JSON.stringify(data));
+
+            // redirect to salesforce oauth page
+            window.setTimeout(()=> window.location.replace(data.redirectTo) , 1000)
         });
 
     })

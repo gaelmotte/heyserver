@@ -11,19 +11,19 @@ const middlewares = jsonServer.defaults()
 const router = jsonServer.router({
 	"organization":[
 		{
-			"id":0,
+			"id":"org0",
 			"orgName":"StartUp0"
 			//SFDC related info goes here
 		},
 		{
-			"id":1,
+			"id":"org1",
 			"orgName":"StartUp1"
 			//SFDC related info goes here
 		}
 	],
 	"user":[
 		{
-			"id":0,
+			"id":"sample",
 			"username":"user0",
 			"password":"user0",
 			"organizationId":0
@@ -31,13 +31,13 @@ const router = jsonServer.router({
 	],
 	"administrator":[
 		{
-			"id":0,
+			"id":"root",
 			"username":process.env.ADMIN_USERNAME,
 			"password":process.env.ADMIN_PASSWORD
 		}
 	],
 	"leads":[
-		{
+		/*{
 			"id":0,
 			"organizationId":0,
 			"name":"lead0"
@@ -46,7 +46,7 @@ const router = jsonServer.router({
 			"id":1,
 			"organizationId":1,
 			"name":"lead1"
-		}
+		}*/
 	],
 	"opportunities":[],
 	"events":[]
@@ -71,10 +71,59 @@ var oauth2 = new jsforce.OAuth2({
 });
 
 
-server.get('/oauth2/auth/:oid', function(req, res) {
+
+
+
+
+/* AuthN middleware */
+let authNMiddleware = (req, res, next) => {
+	console.log("middleware called", req.headers.authorization, router.db.get("administrator").value())
+	if (req.headers.authorization) { 
+
+
+		let username, password;
+		[username, password] = (new Buffer(req.headers.authorization.split(" ")[1], 'base64').toString()).split(":");
+		let administrator = router.db.get("administrator").value().filter( u => u.username === username && u.password === password)[0];
+		console.log(username, password)
+		if(administrator){
+			req.administrator = administrator
+			console.log("acting as aadministrator", administrator)
+			next()
+		}else{
+			console.log(router.db.get("user").value())
+			let user = router.db.get("user").value().filter( u => u.username === username && u.password === password)[0];
+			if(user){
+				req.user = user
+				console.log("acting as user", user)
+				let organization = router.db.get("organization").value().filter( o => o.id === user.organizationId)[0];
+				if(organization){
+					req.organization = organization;
+					next()
+				}else{
+					res.status(401).send("No Org found four this user ?!")
+				}
+			}else{
+				res.sendStatus(401)
+			}
+		}
+	} else {
+		res.sendStatus(401)
+	}
+}
+
+server.use("/me",authNMiddleware)
+server.use("/oauth2/auth",authNMiddleware)
+
+
+
+server.get('/oauth2/auth', function(req, res) {
+
 	let state = randomstring.generate()
-	console.log(router.db.get("organization").filter({"id": parseInt(req.params.oid)}).nth(0).assign({sfdc_oauthState:state}).write())
-	res.redirect(oauth2.getAuthorizationUrl({ scope : 'api' })+"&state="+state);
+	console.log(router.db.get("organization").filter({"id": parseInt(req.organization.id)}).nth(0).assign({sfdc_oauthState:state}).write())
+	res.send({
+		"organization_id" : req.organization.id,
+		"redirectTo":oauth2.getAuthorizationUrl({ scope : 'api' })+"&state="+state
+	});
 });
 
 //
@@ -127,45 +176,6 @@ server.get("/test/:oid",function(req,res){
 			"display_name" : res2.display_name
 		})
 	  });
-})
-
-
-
-
-
-/* AuthN middleware */
-server.use("/me",(req, res, next) => {
-	console.log("middleware called", req.headers.authorization, router.db.get("administrator").value())
-	if (req.headers.authorization) { 
-
-
-		let username, password;
-		[username, password] = (new Buffer(req.headers.authorization.split(" ")[1], 'base64').toString()).split(":");
-		let administrator = router.db.get("administrator").value().filter( u => u.username === username && u.password === password)[0];
-		console.log(username, password)
-		if(administrator){
-			req.administrator = administrator
-			console.log("acting as aadministrator", administrator)
-			next()
-		}else{
-			let user = router.db.get("user").value().filter( u => u.username === username && u.password === password)[0];
-			if(user){
-				req.user = user
-				console.log("acting as user", user)
-				let organization = router.db.get("organization").value().filter( o => o.id === user.organizationId)[0];
-				if(organization){
-					req.organization = organization;
-					next()
-				}else{
-					res.status(401).send("No Org found four this user ?!")
-				}
-			}else{
-				res.sendStatus(401)
-			}
-		}
-	} else {
-		res.sendStatus(401)
-	}
 })
 
 server.get("/me",function (req,res){

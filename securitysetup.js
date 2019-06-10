@@ -52,7 +52,7 @@ module.exports = function(server, router){
 
             if(req.administrator){ //administrators shouldn't be restricted
                 next()
-            }else if(req.user && req.organization){ //both should be present
+            }else if(req.user || req.organization){ //both should be present
 
                 //force appending organizationId
                 req.body.organizationId = req.organization.id
@@ -76,7 +76,7 @@ module.exports = function(server, router){
 
             if(req.administrator){ //administrators shouldn't be restricted
                 next()
-            }else if(req.user && req.organization){ //both should be present
+            }else if(req.user || req.organization){ //both should be present
 
                 
                 if(req.params.oid && req.params.oid != req.organization.id){

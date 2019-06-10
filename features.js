@@ -13,7 +13,7 @@ module.exports = function(server, router, ss, oauth){
                 "organization_id":null,
                 "sfdc_instanceUrl":null
             })
-        }else if(req.user){
+        }else if(req.user || req.organization){
             res.send({
                 "isAdmin":false,
                 "username":req.user.username,

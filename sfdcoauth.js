@@ -24,9 +24,9 @@ module.exports = function(server, router, ss){
             // Refresh event will be fired when renewed access token
             // to store it in your storage for next request
             console.log("refresh access token", accessToken);
-            let a = router.db.get("organization").find({id:req.organization.id}).value();
+            let a = router.db.get("organization").find({id:organization.id}).value();
             a.accessToken = accessToken;
-            router.db.get("organization").find({id:req.organization.id}).assign(a).write()
+            router.db.get("organization").find({id:organization.id}).assign(a).write()
         });
 
         return conn

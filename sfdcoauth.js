@@ -45,7 +45,7 @@ module.exports = function(server, router, ss){
 
         res.send({
             "organization_id" : req.organization.id,
-            "redirectTo":oauth2.getAuthorizationUrl({ scope : 'api' })+"&state="+state,
+            "redirectTo":oauth2.getAuthorizationUrl({ scope : 'api refresh_token' })+"&state="+state,
         });
     });
 

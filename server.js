@@ -63,28 +63,7 @@ let f = features(server, router, ss, oauth)
 
 server.use("/api",router)
 
-server.use("/me",ss.authNMiddleware)
 
-
-server.get("/me",function (req,res){
-	if(req.administrator){
-		res.send({
-			"isAdmin":true,
-			"username":req.administrator.username,
-			"organization_id":null,
-			"sfdc_instanceUrl":null
-		})
-	}else if(req.user){
-		res.send({
-			"isAdmin":false,
-			"username":req.user.username,
-			"organization_id":req.organization.id,
-			"sfdc_instanceUrl":req.organization.sfdc_instanceUrl
-		})
-	}else{
-		res.sendStatus(401)
-	}
-});
 
 
 server.listen(process.env.PORT || 3000, () => {

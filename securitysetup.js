@@ -1,7 +1,7 @@
 module.exports = function(server, router){
     
     /* AuthN middleware */
-    server.use("/api/*",(req, res, next) => {
+    let authNMiddleware = (req, res, next) => {
         console.log("AuthN middleware called")
         if (req.headers.authorization) { 
 
@@ -33,7 +33,9 @@ module.exports = function(server, router){
         } else {
             res.sendStatus(401)
         }
-    })
+    }
+
+    
 
     function secureDirectRoute(resource){
         return function (req, res, next) {
@@ -83,6 +85,9 @@ module.exports = function(server, router){
         }
     }  
 
+    
+    server.use("/api/*",authNMiddleware);
+
     server.get("/api/organization",secureSearchRoute("organization"))
     server.get("/api/leads",secureSearchRoute("leads"))
     server.get("/api/opportunities",secureSearchRoute("opportunities"))
@@ -102,6 +107,10 @@ module.exports = function(server, router){
     server.all("/api/organization/:oid/leads/:id", secureDirectRoute("leads"));
     server.all("/api/organization/:oid/opportunities/:id", secureDirectRoute("opportunities"));
     server.all("/api/organization/:oid/events/:id", secureDirectRoute("events"));
+
+    return{
+        authNMiddleware
+    }
 
 }
 

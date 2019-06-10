@@ -56,7 +56,7 @@ const router = jsonServer.router({
 
 server.use(middlewares)
 server.use(jsonServer.bodyParser)
-securitysetup(server,router)
+let ss = securitysetup(server,router)
 server.use("/api",router)
 
 
@@ -74,46 +74,9 @@ var oauth2 = new jsforce.OAuth2({
 
 
 
-
-/* AuthN middleware */
-let authNMiddleware = (req, res, next) => {
-	console.log("middleware called", req.headers.authorization, router.db.get("administrator").value())
-	if (req.headers.authorization) { 
-
-
-		let username, password;
-		[username, password] = (new Buffer(req.headers.authorization.split(" ")[1], 'base64').toString()).split(":");
-		let administrator = router.db.get("administrator").value().filter( u => u.username === username && u.password === password)[0];
-		console.log(username, password)
-		if(administrator){
-			req.administrator = administrator
-			console.log("acting as aadministrator", administrator)
-			next()
-		}else{
-			console.log(router.db.get("user").value())
-			let user = router.db.get("user").value().filter( u => u.username === username && u.password === password)[0];
-			if(user){
-				req.user = user
-				console.log("acting as user", user)
-				let organization = router.db.get("organization").value().filter( o => o.id === user.organizationId)[0];
-				if(organization){
-					req.organization = organization;
-					next()
-				}else{
-					res.status(401).send("No Org found four this user ?!")
-				}
-			}else{
-				res.sendStatus(401)
-			}
-		}
-	} else {
-		res.sendStatus(401)
-	}
-}
-
-server.use("/me",authNMiddleware)
-server.use("/oauth2/auth",authNMiddleware)
-server.use("/test",authNMiddleware)
+server.use("/me",ss.authNMiddleware)
+server.use("/oauth2/auth",ss.authNMiddleware)
+server.use("/test",ss.authNMiddleware)
 
 
 
@@ -177,7 +140,9 @@ server.get("/test",function(req,res){
 		// Refresh event will be fired when renewed access token
 		// to store it in your storage for next request
 		console.log("refresh access token", accessToken);
-		router.db.get("organization").filter({id: req.params.oid}).nth(0).assign({sfdc_accessToken:accessToken}).write()
+		let a = router.db.get("organization").find({id:req.organization.id}).value();
+		a.accessToken = accessToken;
+		router.db.get("organization").find({id:req.organization.id}).assign(a).write()
 	  });
 
 	conn.identity(function(err, res2) {
@@ -211,18 +176,6 @@ server.get("/me",function (req,res){
 	}
 });
 
-server.get("/raw/:r",(req,res)=>{
-	res.send(router.db.get(req.params.r).value());
-})
-
-server.get("/edit/:r/:id",(req,res)=>{
-
-	let a = router.db.get(req.params.r).find({id:req.params.id}).value()
-	a.somethind = "lol";
-	router.db.get(req.params.r).find({id:req.params.id}).assign(a).write()
-	
-	res.send(router.db.get(req.params.r).value());
-})
 
 server.listen(process.env.PORT || 3000, () => {
   console.log('JSON Server is running on ', process.env.PORT || 3000)

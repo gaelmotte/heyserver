@@ -166,12 +166,12 @@ server.get('/oauth2/callback', function(req, res) {
 });
 
 server.get("/test",function(req,res){
-	let organization = router.db.get("organization").find({"id": req.organization.id}).value();
+	
 	var conn = new jsforce.Connection({
 		oauth2 ,
-		instanceUrl : organization.sfdc_instanceUrl,
-		accessToken : organization.sfdc_accessToken,
-		refreshToken : organization.sfdc_refreshToken
+		instanceUrl : req.organization.sfdc_instanceUrl,
+		accessToken : req.organization.sfdc_accessToken,
+		refreshToken : req.organization.sfdc_refreshToken
 	  });
 	  conn.on("refresh", function(accessToken, res) {
 		// Refresh event will be fired when renewed access token

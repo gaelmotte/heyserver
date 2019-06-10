@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Title of the document</title>
+<link rel="stylesheet" type="text/css" href="styles/normalize.css">
+<link rel="stylesheet" type="text/css" href="styles/salesforce-lightning-design-system.css">
+<link rel="stylesheet" type="text/css" href="styles/custom.css">
+
+<script src="lib/jquery-3.4.1.js"></script>
+<script src="app.js"></script>
+
+</head>
+
+<body class="slds-p-around_medium">
+    <div class="slds-grid slds-grid--pull-padded slds-wrap">
+        <div class="slds-col--padded slds-size_1-of-1">
+                <article class="slds-card">
+                        <div class="slds-card__header slds-grid">
+                          <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                            <div class="slds-media__figure">
+                              <span class="slds-icon_container" title="hey">
+                                <img src="logo/hey.png" width="64", height="64"/>
+                                <span class="slds-assistive-text">Hey</span>
+                              </span>
+                            </div>
+                            <div class="slds-media__body">
+                              <h1 class="slds-card__header-title">
+                                  <span>Welcome to the Hey Application</span>
+                              </h1>
+                              <p>
+                                  This server app is only intended to mock a server app.
+                              </p>
+                            </div>
+                            <div class="slds-no-flex">
+                                <form action="/me" method="get" id="loginForm">
+                                    <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="username_input">Username</label>
+                                        <div class="slds-form-element__control">
+                                            <input type="text" id="username_input" class="slds-input" />
+                                        </div>
+                                    </div>
+                                    <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="password_input">Password</label>
+                                        <div class="slds-form-element__control">
+                                            <input type="password" id="password_input" class="slds-input" />
+                                        </div>
+                                    </div>
+                                    <input type="submit" class="slds-button slds-button_neutral"/>
+                                </form>
+                                
+                            </div>
+                            <div class="slds-no-flex slds-hide" id="userInfo">
+                                <dl class="slds-dl_horizontal">
+                                    <dt class="slds-dl_horizontal__label">Username:</dt>
+                                    <dd class="slds-dl_horizontal__detail"></dd>
+                                    <dt class="slds-dl_horizontal__label">Is administrator ? :</dt>
+                                    <dd class="slds-dl_horizontal__detail">/dd>               
+                                    <dt class="slds-dl_horizontal__label">Oranization Id:</dt>
+                                    <dd class="slds-dl_horizontal__detail"></dd>
+                                    <dt class="slds-dl_horizontal__label">SFDC URL:</dt>
+                                    <dd class="slds-dl_horizontal__detail"></dd>
+                                </dl>
+                                <button class="slds-button slds-button_neutral" id="logoutButton">Logout</button>
+                            </div>
+                          </header>
+                        </div>
+                    </article>
+        </div>
+    
+        <div class="slds-col--padded slds-size_1-of-2 slds-hide adminFeature">
+                <article class="slds-card">
+                    <h2> Provision New Organization </h2>
+                    <form action="/api/organization" method="post" id="newOrgForm">
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="orgName">Organization Name</label>
+                            <div class="slds-form-element__control">
+                                <input type="text" id="orgName" class="slds-input" name="orgName" placeholder="AwesomeSoft"/>
+                            </div>
+                        </div>
+                        <input type="submit" class="slds-button slds-button_neutral"/>
+                        <div class="output">
+
+                        </div>
+                    </form>
+                </article>
+            </div>
+
+        <div class="slds-col--padded slds-size_1-of-2 slds-hide adminFeature">
+                <article class="slds-card">
+                    <h2> Provision New Organization </h2>
+                    <form action="" method "post">
+
+                    </form>
+                </article>
+            </div>
+            <div class="slds-col--padded slds-size_1-of-2 slds-hide adminFeature">
+                <article class="slds-card">
+                    <span>some info ADMIN </span>
+                </article>
+            </div>
+            <div class="slds-col--padded slds-size_1-of-2 slds-hide adminFeature">
+                <article class="slds-card">
+                    <span>some info ADMIN </span>
+                </article>
+            </div>
+            <div class="slds-col--padded slds-size_1-of-2 slds-hide adminFeature">
+                <article class="slds-card">
+                    <span>some info ADMIN </span>
+                </article>
+            </div>
+    </div>
+        
+
+    </div>
+   
+
+</body>
+
+</html>

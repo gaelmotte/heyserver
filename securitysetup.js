@@ -1,10 +1,11 @@
 module.exports = function(server, router){
     
     /* AuthN middleware */
-    server.use("/api",(req, res, next) => {
+    server.use("/api/*",(req, res, next) => {
+        console.log("AuthN middleware called")
         if (req.headers.authorization) { 
 
-
+            console.log("AuthN middleware called with authorisation header", req.headers.authorization)
             let username, password;
             [username, password] = (new Buffer(req.headers.authorization.split(" ")[1], 'base64').toString()).split(":");
             let administrator = router.db.get("administrator").value().filter( u => u.username === username && u.password === password)[0];

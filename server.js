@@ -4,6 +4,8 @@ const securitysetup = require('./securitysetup')
 const jsforce = require('jsforce')
 const randomstring = require('randomstring')
 
+console.log(process.env)
+
 const server = jsonServer.create()
 const middlewares = jsonServer.defaults()
 const router = jsonServer.router({
@@ -128,6 +130,63 @@ server.get("/test/:oid",function(req,res){
 })
 
 
+
+
+
+/* AuthN middleware */
+server.use("/me",(req, res, next) => {
+	console.log("middleware called", req.headers.authorization, router.db.get("administrator").value())
+	if (req.headers.authorization) { 
+
+
+		let username, password;
+		[username, password] = (new Buffer(req.headers.authorization.split(" ")[1], 'base64').toString()).split(":");
+		let administrator = router.db.get("administrator").value().filter( u => u.username === username && u.password === password)[0];
+		console.log(username, password)
+		if(administrator){
+			req.administrator = administrator
+			console.log("acting as aadministrator", administrator)
+			next()
+		}else{
+			let user = router.db.get("user").value().filter( u => u.username === username && u.password === password)[0];
+			if(user){
+				req.user = user
+				console.log("acting as user", user)
+				let organization = router.db.get("organization").value().filter( o => o.id === user.organizationId)[0];
+				if(organization){
+					req.organization = organization;
+					next()
+				}else{
+					res.status(401).send("No Org found four this user ?!")
+				}
+			}else{
+				res.sendStatus(401)
+			}
+		}
+	} else {
+		res.sendStatus(401)
+	}
+})
+
+server.get("/me",function (req,res){
+	if(req.administrator){
+		res.send({
+			"isAdmin":true,
+			"username":req.administrator.username,
+			"organization_id":null,
+			"sfdc_instanceUrl":null
+		})
+	}else if(req.user){
+		res.send({
+			"isAdmin":false,
+			"username":req.user.username,
+			"organization_id":req.organization.id,
+			"sfdc_instanceUrl":req.organization.sfdc_instanceUrl
+		})
+	}else{
+		res.sendStatus(401)
+	}
+});
 
 server.listen(process.env.PORT || 3000, () => {
   console.log('JSON Server is running on ', process.env.PORT || 3000)

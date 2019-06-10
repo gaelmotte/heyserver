@@ -113,6 +113,7 @@ let authNMiddleware = (req, res, next) => {
 
 server.use("/me",authNMiddleware)
 server.use("/oauth2/auth",authNMiddleware)
+server.use("/test",authNMiddleware)
 
 
 
@@ -138,7 +139,8 @@ server.get('/oauth2/callback', function(req, res) {
   conn.authorize(code, function(err, userInfo) {
     if (err) { return console.error(err); }
     // Now you can get the access token, refresh token, and instance URL information.
-    // Save them to establish connection next time.	
+	// Save them to establish connection next time.	
+	console.log("registering a SFDC instance for org ", router.db.get("organization").filter({sfdc_oauthState:state}).nth(0).value())
 	router.db.get("organization").filter({sfdc_oauthState:state}).nth(0).assign({
 		sfdc_instanceUrl : conn.instanceUrl,
 		sfdc_refreshToken : conn.refreshToken,
@@ -148,11 +150,11 @@ server.get('/oauth2/callback', function(req, res) {
     console.log("User ID: " + userInfo.id);
     console.log("Org ID: " + userInfo.organizationId);
     // ...
-    res.send('success'); // or your desired response
+    res.redirect("/"); // or your desired response
   });
 });
 
-server.get("/test/:oid",function(req,res){
+server.get("/test",function(req,res){
 	let organization = router.db.get("organization").filter({"id": parseInt(req.params.oid)}).nth(0).value();
 	var conn = new jsforce.Connection({
 		oauth2 ,

@@ -27,7 +27,17 @@ module.exports = function(server, router){
                         res.status(401).send("No Org found four this user ?!")
                     }
                 }else{
-                    res.sendStatus(401)
+                    let nc = router.db.get("organization").value().filter( u => u.ncUsername === username && u.ncPassword === password)[0];
+                    if(nc){
+                        req.nc = nc
+                        console.log("acting as nc", nc)
+                        let organization = nc;
+                        req.organization = organization;
+                        next()
+
+                    }else{
+                        res.sendStatus(401)
+                    }
                 }
             }
         } else {

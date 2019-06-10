@@ -144,14 +144,15 @@ server.get('/oauth2/callback', function(req, res) {
     if (err) { return console.error(err); }
     // Now you can get the access token, refresh token, and instance URL information.
 	// Save them to establish connection next time.	
-	console.log("registering a SFDC instance for org ", router.db.get("organization").find({"sfdc_oauthState":state}).nth(0).value())
-	let a = router.db.get("organization").find({sfdc_oauthState:state}).nth(0).value()
+	console.log("registering a SFDC instance for org ")
+	let a = router.db.get("organization").find({"sfdc_oauthState":state}).value()
+	console.log("organizaiton to update", a)
 	if(a){
 		delete a.sfdc_oauthState
 		a.sfdc_instanceUrl = conn.instanceUrl
 		a.sfdc_refreshToken = conn.refreshToken
 		a.sfdc_accessToken = conn.accessToken
-		router.db.get("organization").find({sfdc_oauthState:state}).nth(0).assign(a).write()
+		router.db.get("organization").find({"sfdc_oauthState":state}).assign(a).write()
 		
 		console.log("User ID: " + userInfo.id);
 		console.log("Org ID: " + userInfo.organizationId);

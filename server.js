@@ -3,6 +3,8 @@ const jsonServer = require('json-server')
 const securitysetup = require('./securitysetup')
 const sfdcoauth = require("./sfdcoauth")
 const features = require("./features")
+const OAuthServer = require("express-oauth-server")
+const oauthmodel = require('./model.js');
 
 
 const server = jsonServer.create()
@@ -64,6 +66,46 @@ let f = features(server, router, ss, oauth)
 server.use("/api",router)
 
 
+server.oauth = OAuthServer({
+	model: oauthmodel
+  });
+
+server.all('/oauth/token', obtainToken);
+
+app.get('/someendpoint', authenticateRequest, function(req, res) {
+
+	res.send({"someData":"someValue"});
+});
+
+function obtainToken(req, res) {
+
+	var request = new Request(req);
+	var response = new Response(res);
+
+	return app.oauth.token(request, response)
+		.then(function(token) {
+
+			res.json(token);
+		}).catch(function(err) {
+
+			res.status(err.code || 500).json(err);
+		});
+}
+
+function authenticateRequest(req, res, next) {
+
+	var request = new Request(req);
+	var response = new Response(res);
+
+	return app.oauth.authenticate(request, response)
+		.then(function(token) {
+
+			next();
+		}).catch(function(err) {
+
+			res.status(err.code || 500).json(err);
+		});
+}
 
 
 server.listen(process.env.PORT || 3000, () => {

@@ -72,7 +72,7 @@ server.oauth = new OAuthServer({
 
 server.all('/oauth/token', obtainToken);
 
-app.get('/someendpoint', authenticateRequest, function(req, res) {
+server.get('/someendpoint', authenticateRequest, function(req, res) {
 
 	res.send({"someData":"someValue"});
 });

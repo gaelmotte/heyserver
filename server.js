@@ -66,7 +66,7 @@ let f = features(server, router, ss, oauth)
 server.use("/api",router)
 
 
-server.oauth = OAuthServer({
+server.oauth = new OAuthServer({
 	model: oauthmodel
   });
 

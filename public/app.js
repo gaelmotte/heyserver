@@ -188,6 +188,9 @@ $(function() {
             console.log(data)
             form.find(".output").text(JSON.stringify(data));
 
+        }).fail(data =>{
+            console.log(data)
+            form.find(".output").text(JSON.stringify(data));
         });
 
 

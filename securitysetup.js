@@ -1,7 +1,7 @@
 module.exports = function(server, router){
     
     /* AuthN middleware */
-    server.use("/api/*",(req, res, next) => {
+    let authNMiddleware = (req, res, next) => {
         console.log("AuthN middleware called")
         if (req.headers.authorization) { 
 
@@ -27,20 +27,32 @@ module.exports = function(server, router){
                         res.status(401).send("No Org found four this user ?!")
                     }
                 }else{
-                    res.sendStatus(401)
+                    let nc = router.db.get("organization").value().filter( u => u.ncUsername === username && u.ncPassword === password)[0];
+                    if(nc){
+                        req.nc = nc
+                        console.log("acting as nc", nc)
+                        let organization = nc;
+                        req.organization = organization;
+                        next()
+
+                    }else{
+                        res.sendStatus(401)
+                    }
                 }
             }
         } else {
             res.sendStatus(401)
         }
-    })
+    }
+
+    
 
     function secureDirectRoute(resource){
         return function (req, res, next) {
 
             if(req.administrator){ //administrators shouldn't be restricted
                 next()
-            }else if(req.user && req.organization){ //both should be present
+            }else if(req.user || req.organization){ //both should be present
 
                 //force appending organizationId
                 req.body.organizationId = req.organization.id
@@ -64,7 +76,7 @@ module.exports = function(server, router){
 
             if(req.administrator){ //administrators shouldn't be restricted
                 next()
-            }else if(req.user && req.organization){ //both should be present
+            }else if(req.user || req.organization){ //both should be present
 
                 
                 if(req.params.oid && req.params.oid != req.organization.id){
@@ -82,6 +94,9 @@ module.exports = function(server, router){
             }
         }
     }  
+
+    
+    server.use("/api/*",authNMiddleware);
 
     server.get("/api/organization",secureSearchRoute("organization"))
     server.get("/api/leads",secureSearchRoute("leads"))
@@ -102,6 +117,10 @@ module.exports = function(server, router){
     server.all("/api/organization/:oid/leads/:id", secureDirectRoute("leads"));
     server.all("/api/organization/:oid/opportunities/:id", secureDirectRoute("opportunities"));
     server.all("/api/organization/:oid/events/:id", secureDirectRoute("events"));
+
+    return{
+        authNMiddleware
+    }
 
 }
 

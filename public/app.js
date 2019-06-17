@@ -121,6 +121,35 @@ $(function() {
 
     })
 
+    /* Install package in Salesforce */
+    $("#sfdcInstallForm").submit(function(event){
+        event.preventDefault();
+        let form = $(this);
+
+        $.ajax({
+            url:form.attr('action'),
+            method:form.attr('method'),
+            dataType: 'json',
+            beforeSend:function (xhr) {
+                xhr.setRequestHeader ("Authorization", appState.authHeader);
+            },
+            data : form.serialize()
+        }).done(data =>{
+            console.log(data)
+            form.find(".output").html("<p>Use these credentials when installing the package</p>"+
+            "<dl class=\"slds-dl_horizontal\">"+
+            "<dt class=\"slds-dl_horizontal__label\">Username:</dt>"+
+            "<dd class=\"slds-dl_horizontal__detail\">"+data.ncUsername+"</dd>"+
+            "<dt class=\"slds-dl_horizontal__label\">Password :</dt>"+
+            "<dd class=\"slds-dl_horizontal__detail\">"+data.ncPassword+"</dd> "+ 
+            "</dl>"+
+            "<p>You will soon be redirected to the install page</p>");
+
+            // redirect to salesforce oauth page
+            window.setTimeout(()=> window.open(data.redirectTo) , 2000)
+        });
+    })
+
     /* login to Salesforce Org */
     $("#testsfdcForm").submit(function(event){
         event.preventDefault();

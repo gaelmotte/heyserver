@@ -170,4 +170,26 @@ $(function() {
         });
 
     })
+
+    /* New lead */
+    $("#newLead").submit(function(event){
+        event.preventDefault();
+        let form = $(this);
+        
+        $.ajax({
+            url:form.attr('action'),
+            method:form.attr('method'),
+            dataType: 'json',
+            beforeSend:function (xhr) {
+                xhr.setRequestHeader ("Authorization", appState.authHeader);
+            },
+            data : form.serialize()
+        }).done(data =>{
+            console.log(data)
+            form.find(".output").text(JSON.stringify(data));
+
+        });
+
+
+    });
 });

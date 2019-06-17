@@ -144,7 +144,7 @@
                                 </form>
                         </article>
                     </div>
-                <div class="slds-col--padded slds-size_1-of-2 slds-hide userFeature">
+                    <div class="slds-col--padded slds-size_1-of-2 slds-hide userFeature">
                         <article class="slds-card">
                                 <h2> test connection to Salesforce</h2>
                                 <form action="/test" method="get" id="testsfdcForm">
@@ -154,6 +154,42 @@
                                             <input type="text" id="orgName" class="slds-input" name="orgName" placeholder="AwesomeSoft"/>
                                         </div>
                                     </div>-->
+                                    <input type="submit" class="slds-button slds-button_neutral"/>
+                                    <div class="output">
+            
+                                    </div>
+                                </form>
+                        </article>
+                    </div>
+
+                    <div class="slds-col--padded slds-size_1-of-2 slds-hide userFeature">
+                        <article class="slds-card">
+                                <h2> Create new lead</h2>
+                                <form action="/work/lead" method="post" id="newLead">
+                                    <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="leadFirstName">Lead First Name</label>
+                                        <div class="slds-form-element__control">
+                                            <input type="text" id="leadFirstName" class="slds-input" name="leadFirstName" placeholder="Martin"/>
+                                        </div>
+                                    </div>
+                                    <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="leadLastName">Lead Last Name</label>
+                                        <div class="slds-form-element__control">
+                                            <input type="text" id="leadlastName" class="slds-input" name="leadLastName" placeholder="Dupont"/>
+                                        </div>
+                                    </div>
+                                    <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="leadCompany">Lead Company</label>
+                                        <div class="slds-form-element__control">
+                                            <input type="text" id="leadCompany" class="slds-input" name="leadCompany" placeholder="WhateverSoft"/>
+                                        </div>
+                                    </div>
+                                    <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="leadDescription">Lead Description</label>
+                                        <div class="slds-form-element__control">
+                                            <input type="text" id="leadDescription" class="slds-input" name="leadDescription" placeholder="Intéressé par"/>
+                                        </div>
+                                    </div>
                                     <input type="submit" class="slds-button slds-button_neutral"/>
                                     <div class="output">
             

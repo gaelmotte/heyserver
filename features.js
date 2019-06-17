@@ -56,4 +56,41 @@ module.exports = function(server, router, ss, oauth){
             "redirectTo":req.organization.sfdc_instanceUrl+"/packagingSetupUI/ipLanding.app?apvId="+ process.env.PACKAGE_ID,
         });
     })
+
+    server.use("/work/lead",ss.authNMiddleware)
+    server.post("/work/lead",(req,res)=>{
+        //send lead to SFDC
+        let conn = oauth.getConnection(req.organization);
+        conn.sobject("Lead").create({
+            FirstName : req.params.leadDirstName,
+            LastName : req.params.leadLastName,
+            Company : req.params.leadCompany,
+            Description : req.params.leadDescription        
+        }, function(err, ret) {
+            if (err || !ret.success) { 
+                return console.error(err, ret); 
+                res.sendStatus(500, err)
+            }
+            
+            console.log("Created record id : " + ret.id);
+            router.db.get("leads").push({
+                FirstName : req.params.leadDirstName,
+                LastName : req.params.leadLastName,
+                Company : req.params.leadCompany,
+                Description : req.params.leadDescription,
+                sfdcId : ret.id     
+            }).write();
+
+            res.send({
+                FirstName : req.params.leadDirstName,
+                LastName : req.params.leadLastName,
+                Company : req.params.leadCompany,
+                Description : req.params.leadDescription,
+                sfdcId : ret.id     
+            });
+
+            
+        });
+    });
+
 }

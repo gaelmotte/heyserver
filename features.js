@@ -62,10 +62,10 @@ module.exports = function(server, router, ss, oauth){
         //send lead to SFDC
         let conn = oauth.getConnection(req.organization);
         let lead = {
-            FirstName : req.params.leadFirstName,
-            LastName : req.params.leadLastName,
-            Company : req.params.leadCompany,
-            Description : req.params.leadDescription        
+            FirstName : req.query.leadFirstName,
+            LastName : req.query.leadLastName,
+            Company : req.query.leadCompany,
+            Description : req.query.leadDescription        
         };
 
         console.log(lead)

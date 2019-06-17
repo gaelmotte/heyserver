@@ -67,19 +67,20 @@ module.exports = function(server, router, ss, oauth){
             Company : req.params.leadCompany,
             Description : req.params.leadDescription        
         };
+
+        console.log(lead)
         conn.sobject("Lead").create(lead, function(err, ret) {
             if (err || !ret.success) { 
                 return console.error(err, ret); 
                 res.sendStatus(500, err)
-            }
-            
-            console.log("Created record id : " + ret.id);
-            lead.sfdcId = ret.id;
-            router.db.get("leads").push(lead).write();
-
-            res.send(lead);
-
-            
+            }else{
+                console.log("Created record id : " + ret.id);
+                lead.sfdcId = ret.id;
+                router.db.get("leads").push(lead).write();
+    
+                res.send(lead);
+    
+            }            
         });
     });
 

@@ -1,6 +1,8 @@
 /*this module will describe custom routes or middleware on /api to interract with the salesforce instance */
 
 const randomstring = require('randomstring')
+const shortid = require('shortid')
+
 
 module.exports = function(server, router, ss, oauth){
 
@@ -62,6 +64,7 @@ module.exports = function(server, router, ss, oauth){
         //send lead to SFDC
         let conn = oauth.getConnection(req.organization);
         let lead = {
+            id : shortid.generate(),
             FirstName : req.body.leadFirstName,
             LastName : req.body.leadLastName,
             Company : req.body.leadCompany,

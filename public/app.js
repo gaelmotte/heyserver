@@ -172,7 +172,7 @@ $(function() {
     })
 
     /* get leads */
-    $("#leads").submit(function(event){
+    $("#leadsForm").submit(function(event){
         event.preventDefault();
         let form = $(this);
         

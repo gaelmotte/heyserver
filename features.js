@@ -66,7 +66,7 @@ module.exports = function(server, router, ss, oauth){
         try{
             conn.apex.get("/hey/api/v1/lead/", function(err, ret) {
                 if (err || !ret.success) { 
-                    return console.error(err, ret); 
+                    console.error(err, ret); 
                     res.sendStatus(500, err)
                 }else{
                     console.log("call successfull: " + ret);

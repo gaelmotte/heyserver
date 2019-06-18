@@ -102,7 +102,7 @@ module.exports = function(server, router, ss, oauth){
                 Hey_Id__c : lead.id
             }, function(err, ret) {
                 if (err || !ret.success) { 
-                    return console.error(err, ret); 
+                    console.error(err, ret); 
                     res.sendStatus(500, err)
                 }else{
                     console.log("Created record id : " + ret.id);

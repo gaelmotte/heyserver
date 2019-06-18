@@ -90,7 +90,13 @@ module.exports = function(server, router, ss, oauth){
         };
 
         console.log(lead)
-        conn.sobject("Lead").create(lead, function(err, ret) {
+        conn.sobject("Lead").create({
+            FirstName : lead.FirstName,
+            LastName : lead.LastName,
+            Company : lead.Company,
+            Description: lead.Description,
+            Hey_Id : lead.id
+        }, function(err, ret) {
             if (err || !ret.success) { 
                 return console.error(err, ret); 
                 res.sendStatus(500, err)

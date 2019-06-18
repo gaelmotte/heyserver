@@ -7,7 +7,7 @@ module.exports = function(server, router, ss){
 
     let oauth2 = new jsforce.OAuth2({
         // you can change loginUrl to connect to sandbox or prerelease env.
-        // loginUrl : 'https://test.salesforce.com',
+        loginUrl : 'https://test.salesforce.com',
         clientId : process.env.OAUTH_CLIENTID,
         clientSecret : process.env.OAUTH_CLIENTSECRET,
         redirectUri : process.env.APP_DOMAIN+'/oauth2/callback'

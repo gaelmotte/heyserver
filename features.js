@@ -60,6 +60,24 @@ module.exports = function(server, router, ss, oauth){
     })
 
     server.use("/work/lead",ss.authNMiddleware)
+    server.get("/work/leads",(req,res)=>{
+        //send lead to SFDC
+        let conn = oauth.getConnection(req.organization);
+
+        conn.apex.get("/hey/api/v1/lead/", function(err, ret) {
+            if (err || !ret.success) { 
+                return console.error(err, ret); 
+                res.sendStatus(500, err)
+            }else{
+                console.log("call successfull: " + ret);
+               
+                res.send(ret);
+    
+            }            
+        });
+    });
+
+    server.use("/work/lead",ss.authNMiddleware)
     server.post("/work/lead",(req,res)=>{
         //send lead to SFDC
         let conn = oauth.getConnection(req.organization);

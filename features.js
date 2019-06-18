@@ -59,7 +59,7 @@ module.exports = function(server, router, ss, oauth){
         });
     })
 
-    server.use("/work/lead",ss.authNMiddleware)
+    server.use("/work/leads",ss.authNMiddleware)
     server.get("/work/leads",(req,res)=>{
         //send lead to SFDC
         let conn = oauth.getConnection(req.organization);

@@ -95,7 +95,7 @@ module.exports = function(server, router, ss, oauth){
             LastName : lead.LastName,
             Company : lead.Company,
             Description: lead.Description,
-            Hey_Id : lead.id
+            Hey_Id__c : lead.id
         }, function(err, ret) {
             if (err || !ret.success) { 
                 return console.error(err, ret); 

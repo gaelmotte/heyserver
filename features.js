@@ -63,18 +63,21 @@ module.exports = function(server, router, ss, oauth){
     server.get("/work/leads",(req,res)=>{
         //send lead to SFDC
         let conn = oauth.getConnection(req.organization);
-
-        conn.apex.get("/hey/api/v1/lead/", function(err, ret) {
-            if (err || !ret.success) { 
-                return console.error(err, ret); 
-                res.sendStatus(500, err)
-            }else{
-                console.log("call successfull: " + ret);
-               
-                res.send(ret);
-    
-            }            
-        });
+        try{
+            conn.apex.get("/hey/api/v1/lead/", function(err, ret) {
+                if (err || !ret.success) { 
+                    return console.error(err, ret); 
+                    res.sendStatus(500, err)
+                }else{
+                    console.log("call successfull: " + ret);
+                
+                    res.send(ret);
+        
+                }            
+            });
+        }catch(e){
+            res.status(500).send(e);
+        }
     });
 
     server.use("/work/lead",ss.authNMiddleware)
@@ -90,25 +93,30 @@ module.exports = function(server, router, ss, oauth){
         };
 
         console.log(lead)
-        conn.sobject("Lead").create({
-            FirstName : lead.FirstName,
-            LastName : lead.LastName,
-            Company : lead.Company,
-            Description: lead.Description,
-            Hey_Id__c : lead.id
-        }, function(err, ret) {
-            if (err || !ret.success) { 
-                return console.error(err, ret); 
-                res.sendStatus(500, err)
-            }else{
-                console.log("Created record id : " + ret.id);
-                lead.sfdcId = ret.id;
-                router.db.get("leads").push(lead).write();
-    
-                res.send(lead);
-    
-            }            
-        });
+        try{
+            conn.sobject("Lead").create({
+                FirstName : lead.FirstName,
+                LastName : lead.LastName,
+                Company : lead.Company,
+                Description: lead.Description,
+                Hey_Id__c : lead.id
+            }, function(err, ret) {
+                if (err || !ret.success) { 
+                    return console.error(err, ret); 
+                    res.sendStatus(500, err)
+                }else{
+                    console.log("Created record id : " + ret.id);
+                    lead.sfdcId = ret.id;
+                    router.db.get("leads").push(lead).write();
+        
+                    res.send(lead);
+        
+                }            
+            });
+        }catch(e){
+            res.status(500).send(e);
+        }
+        
     });
 
 }

@@ -27,21 +27,69 @@ module.exports = function(server, router, ss, oauth){
         }
     });
 
+    server.use("/testback",ss.authNMiddleware)
+    server.get("/testback",function(req,res){
+        res.send(req.organization.validateState);
+    });
         
     server.use("/test",ss.authNMiddleware)
     server.get("/test",function(req,res){
         
         var conn = oauth.getConnection(req.organization);
+        try{
+            conn.identity(function(err, ret) {
+                if (err) {  
+                    console.error(err);
+                    res.status(500).send(err)
+                }else{
+                    //call rest endpoint to make sure reciprocal calls do work
+                        //generate temp state for echo service
+                   /* let a = router.db.get("organization").find({"id":req.organization.id}).value();
+                    a.validateState = randomstring.generate();
+                        //store in db
+                    router.db.get("organization").find({"id":req.organization.id}).assign(a).write();*/
 
-        conn.identity(function(err, res2) {
-            if (err) { return console.error(err); }
-            res.send({
-                "user_id" : res2.user_id,
-                "organization_id" : res2.organization_id,
-                "username" : res2.username,
-                "display_name" : res2.display_name
-            })
-        });
+                    let result = {
+                        "user_id" : ret.user_id,
+                        "organization_id" : ret.organization_id,
+                        "username" : ret.username,
+                        "display_name" : ret.display_name
+                    }
+
+                        //call testback
+                    conn.apex.get("/hey/api/v1/test/", function(err2, ret2) {
+                        if (err) { 
+                            console.error(err2, ret2); 
+                            res.sendStatus(500, err2)
+                        }else{
+                            console.log("call successfull: " + ret2);
+                            //check for errors found at apex side :
+                                // - NamedCredNotFound ?
+                                // - Unauthorized ?
+
+                            //compare validateState
+
+                            // clear value if ok
+
+                            // build link if not ok
+                            result.what=ret2;
+                            
+                
+                        }            
+                    });
+                    res.send(result);
+
+                        
+
+
+                    
+                }
+
+            
+            });
+        }catch(e){
+            res.status(500).send(e);
+        }
     })
 
     server.use("/installpackage",ss.authNMiddleware)

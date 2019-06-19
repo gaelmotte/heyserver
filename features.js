@@ -62,7 +62,7 @@ module.exports = function(server, router, ss, oauth){
                             console.error(err2, ret2); 
                             res.sendStatus(500, err2)
                         }else{
-                            console.log("call successfull: " + ret2);
+                            console.log("call successfull: " , ret2);
                             //check for errors found at apex side :
                                 // - NamedCredNotFound ?
                                 // - Unauthorized ?

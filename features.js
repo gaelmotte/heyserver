@@ -67,9 +67,18 @@ module.exports = function (server, router, ss, oauth) {
               // - Unauthorized ?
 
               if (ret2.error == "APPEXCHANGE_NOT_INSTALLED") {
+                result.packageInstallURL = req.organization.sfdc_instanceUrl + "/packagingSetupUI/ipLanding.app?apvId=" + process.env.PACKAGE_ID,
                 result.error = ret2.error
               } else if (ret2.error == "NAMED_CREDENTIALS_UNAUTHORIZED") {
+                if(!req.organization.ncUsername || ! req.organization.ncPassword){
+                  req.organization.ncUsername = req.organization.id;
+                  req.organization.ncPassword = randomstring.generate(32);
+                  router.db.get("organization").find({ id: req.organization.id }).assign( req.organization).write()
+                }           
                 result.error = ret2.error
+                result.ncUsername = req.organization.ncUsername
+                result.ncPassword = req.organization.ncPassword
+                result.changeNamedCredURL = req.organization.sfdc_instanceUrl + "/"+ result.namedCredentialID;
               } else if (ret2.error) {
                 result.error = "UNKNOWN_ERROR"
               } else {
@@ -92,21 +101,6 @@ module.exports = function (server, router, ss, oauth) {
     } catch (e) {
       res.status(500).send(e);
     }
-  })
-
-  server.use("/installpackage", ss.authNMiddleware)
-  server.get("/installpackage", (req, res) => {
-
-    let a = router.db.get("organization").find({ id: req.organization.id }).value()
-    a.ncUsername = req.organization.id;
-    a.ncPassword = randomstring.generate(32);
-    router.db.get("organization").find({ id: req.organization.id }).assign(a).write()
-
-    res.send({
-      "ncUsername": req.organization.ncUsername,
-      "ncPassword": req.organization.ncPassword,
-      "redirectTo": req.organization.sfdc_instanceUrl + "/packagingSetupUI/ipLanding.app?apvId=" + process.env.PACKAGE_ID,
-    });
   })
 
   server.use("/work/leads", ss.authNMiddleware)

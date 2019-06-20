@@ -82,7 +82,7 @@ module.exports = function (server, router, ss, oauth) {
               } else if (ret2.error) {
                 result.error = "UNKNOWN_ERROR"
               } else {
-                if (result.validateState == a.validateState) {
+                if (ret2.validateState == a.validateState) {
                   //validation passes
                   delete a.validateState;
                   router.db.get("organization").find({ "id": req.organization.id }).assign(a).write();

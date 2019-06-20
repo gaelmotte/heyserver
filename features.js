@@ -78,7 +78,7 @@ module.exports = function (server, router, ss, oauth) {
                 result.error = ret2.error
                 result.ncUsername = req.organization.ncUsername
                 result.ncPassword = req.organization.ncPassword
-                result.changeNamedCredURL = req.organization.sfdc_instanceUrl + "/"+ result.namedCredentialID;
+                result.changeNamedCredURL = req.organization.sfdc_instanceUrl + "/"+ rest2.namedCredentialID;
               } else if (ret2.error) {
                 result.error = "UNKNOWN_ERROR"
               } else {

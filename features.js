@@ -66,11 +66,11 @@ module.exports = function (server, router, ss, oauth) {
               // - NamedCredNotFound ?
               // - Unauthorized ?
 
-              if (ret2.err == "APPEXCHANGE_NOT_INSTALLED") {
+              if (ret2.error == "APPEXCHANGE_NOT_INSTALLED") {
                 result.error = ret2.err
-              } else if (ret2.err == "NAMED_CREDENTIALS_UNAUTHORIZED") {
+              } else if (ret2.error == "NAMED_CREDENTIALS_UNAUTHORIZED") {
                 result.error = ret2.err
-              } else if (ret2.err) {
+              } else if (ret2.error) {
                 result.error = "UNKNOWN_ERROR"
               } else {
                 if (result.validateState == a.validateState) {

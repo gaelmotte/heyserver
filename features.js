@@ -67,9 +67,9 @@ module.exports = function (server, router, ss, oauth) {
               // - Unauthorized ?
 
               if (ret2.error == "APPEXCHANGE_NOT_INSTALLED") {
-                result.error = ret2.err
+                result.error = ret2.error
               } else if (ret2.error == "NAMED_CREDENTIALS_UNAUTHORIZED") {
-                result.error = ret2.err
+                result.error = ret2.error
               } else if (ret2.error) {
                 result.error = "UNKNOWN_ERROR"
               } else {

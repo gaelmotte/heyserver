@@ -233,4 +233,36 @@ $(function () {
 
 
   });
+
+  // demo availability
+  $("#loadDemoSlots").click(function(event){
+
+
+    //get slots
+    $.ajax({
+      url: "/work/availabilities",
+      method: "GET",
+      dataType: 'json',
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader("Authorization", appState.authHeader);
+      },
+      //data: form.serialize()
+    }).done(data => {
+      console.log(data)
+      //format display
+      let options = data.map(elem => {
+        let option = document.createElement("option");
+        option.value=elem.userId+"-"+elem.starttime
+        option.innerHTML = elem.starttime+" with "+elem.userFirstName
+        return option;
+      })
+      //Append to #demoSlot
+      $("#demoSlot").append(options);
+
+    }).fail(data => {
+      console.log(data)
+      form.find(".output").text(JSON.stringify(data));
+    });
+    
+  })
 });

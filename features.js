@@ -124,6 +124,27 @@ module.exports = function (server, router, ss, oauth) {
     }
   });
 
+  server.use("/work/availabilities", ss.authNMiddleware)
+  server.get("/work/availabilities", (req, res) => {
+    //send lead to SFDC
+    let conn = oauth.getConnection(req.organization);
+    try {
+      conn.apex.get("/hey/api/v1/availabilities/", function (err, ret) {
+        if (err) {
+          console.error(err, ret);
+          res.sendStatus(500, err)
+        } else {
+          console.log("call successfull: " + ret);
+
+          res.send(ret);
+
+        }
+      });
+    } catch (e) {
+      res.status(500).send(e);
+    }
+  });
+
   server.use("/work/lead", ss.authNMiddleware)
   server.post("/work/lead", (req, res) => {
     //send lead to SFDC

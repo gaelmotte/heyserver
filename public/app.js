@@ -252,8 +252,8 @@ $(function () {
       //format display
       let options = data.slots.map(elem => {
         let option = document.createElement("option");
-        option.value=elem.userId+"_"+elem.starttime
-        option.innerHTML = elem.starttime+" with "+elem.userFirstName
+        option.value=elem.userId+"_"+elem.starttime+"_"+elem.endtime;
+        option.innerHTML = elem.starttime+" with "+elem.userFirstName;
         return option;
       })
       //Append to #demoSlot

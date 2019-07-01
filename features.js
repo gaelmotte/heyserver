@@ -129,7 +129,7 @@ module.exports = function (server, router, ss, oauth) {
     //send lead to SFDC
     let conn = oauth.getConnection(req.organization);
     try {
-      conn.apex.get("/hey/api/v1/availabilities/", function (err, ret) {
+      conn.apex.get("/hey/api/v1/availability/", function (err, ret) {
         if (err) {
           console.error(err, ret);
           res.sendStatus(500, err)

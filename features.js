@@ -57,19 +57,18 @@ module.exports = function (server, router, ss, oauth) {
 
           //call testback
           conn.apex.get("/hey/api/v1/test/", function (err2, ret2) {
-            if (err) {
+            if (err2) {
               console.error(err2, ret2);
-              res.sendStatus(500, err2)
+              result.packageInstallURL = req.organization.sfdc_instanceUrl + "/packagingSetupUI/ipLanding.app?apvId=" + process.env.PACKAGE_ID,
+              result.error = "APPEXCHANGE_NOT_INSTALLED"
+              res.send(result)
             } else {
               console.log("call successfull: ", ret2);
               //check for errors found at apex side :
               // - NamedCredNotFound ?
               // - Unauthorized ?
 
-              if (ret2.error == "APPEXCHANGE_NOT_INSTALLED") {
-                result.packageInstallURL = req.organization.sfdc_instanceUrl + "/packagingSetupUI/ipLanding.app?apvId=" + process.env.PACKAGE_ID,
-                result.error = ret2.error
-              } else if (ret2.error == "NAMED_CREDENTIALS_UNAUTHORIZED") {
+              if (ret2.error == "NAMED_CREDENTIALS_UNAUTHORIZED") {
                 if(!req.organization.ncUsername || ! req.organization.ncPassword){
                   req.organization.ncUsername = req.organization.id;
                   req.organization.ncPassword = randomstring.generate(32);

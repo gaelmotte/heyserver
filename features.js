@@ -161,7 +161,8 @@ module.exports = function (server, router, ss, oauth) {
       OwnerId : OwnerId,
       StartDateTime : StartDateTime,
       EndDateTime:EndDateTime,
-      WhatId : null
+      Hey_Event_Type__c : "Prospect Demo",
+      WhoId : null
     }
 
     console.log(lead)
@@ -181,7 +182,7 @@ module.exports = function (server, router, ss, oauth) {
           lead.sfdcId = ret.id;
           router.db.get("leads").push(lead).write();
 
-          event.WhatId = ret.id
+          event.WhoId = ret.id
 
           //create event
           conn.sobject("Event").create(event , function (err2, ret2) {

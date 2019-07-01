@@ -155,16 +155,21 @@ module.exports = function (server, router, ss, oauth) {
       Company: req.body.leadCompany,
       Description: req.body.leadDescription
     };
-    let [OwnerId,StartDateTime,EndDateTime] = req.body.demoSlot.split("_");
-    let event = {
-      OwnerId : OwnerId,
-      StartDateTime : StartDateTime,
-      EndDateTime:EndDateTime,
-      Hey_Event_Type__c : "Prospect Demo",
-      WhoId : null
-    }
-
     console.log(lead)
+    let event = null;
+    if(req.body.demoSlot){
+      let [OwnerId,StartDateTime,EndDateTime] = req.body.demoSlot.split("_");
+      event = {
+        OwnerId : OwnerId,
+        StartDateTime : StartDateTime,
+        EndDateTime:EndDateTime,
+        Hey_Event_Type__c : "Prospect Demo",
+        WhoId : null
+      }
+    }
+    console.log(event)
+
+    
     try {
       conn.sobject("Lead").create({
         FirstName: lead.FirstName,
@@ -181,20 +186,21 @@ module.exports = function (server, router, ss, oauth) {
           lead.sfdcId = ret.id;
           router.db.get("leads").push(lead).write();
 
-          event.WhoId = ret.id
+          if(event){
+            event.WhoId = ret.id
 
-          //create event
-          conn.sobject("Event").create(event , function (err2, ret2) {
-            if (err2 || !ret2.success) {
-              console.error(err2, ret2);
-              res.sendStatus(500, err2)
-            } else {
-              console.log("Created event record id : " + ret2.id);
-              event.sfdcId = ret2.id;
-              res.send({lead,event});
-            }
-          });      
-
+            //create event
+            conn.sobject("Event").create(event , function (err2, ret2) {
+              if (err2 || !ret2.success) {
+                console.error(err2, ret2);
+                res.sendStatus(500, err2)
+              } else {
+                console.log("Created event record id : " + ret2.id);
+                event.sfdcId = ret2.id;
+                res.send({lead,event});
+              }
+            });      
+          }
         }
       });
     } catch (e) {

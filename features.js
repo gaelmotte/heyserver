@@ -157,6 +157,13 @@ module.exports = function (server, router, ss, oauth) {
       Description: req.body.leadDescription
     };
 
+    let event = {
+      OwnerId : "",
+      StartDateTime : "",
+      EndDateTime:"",
+      WhatId : null
+    }
+
     console.log(lead)
     try {
       conn.sobject("Lead").create({
@@ -170,11 +177,23 @@ module.exports = function (server, router, ss, oauth) {
           console.error(err, ret);
           res.sendStatus(500, err)
         } else {
-          console.log("Created record id : " + ret.id);
+          console.log("Created lead record id : " + ret.id);
           lead.sfdcId = ret.id;
           router.db.get("leads").push(lead).write();
 
-          res.send(lead);
+          event.WhatId = ret.id
+
+          //create event
+          conn.sobject("Event").create(event , function (err2, ret2) {
+            if (err2 || !ret2.success) {
+              console.error(err2, ret2);
+              res.sendStatus(500, err2)
+            } else {
+              console.log("Created event record id : " + ret2.id);
+              event.sfdcId = ret2.id;
+              res.send({lead,event});
+            }
+          });      
 
         }
       });

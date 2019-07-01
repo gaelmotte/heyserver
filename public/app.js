@@ -250,7 +250,7 @@ $(function () {
     }).done(data => {
       console.log(data)
       //format display
-      let options = data.map(elem => {
+      let options = data.slots.map(elem => {
         let option = document.createElement("option");
         option.value=elem.userId+"-"+elem.starttime
         option.innerHTML = elem.starttime+" with "+elem.userFirstName

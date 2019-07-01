@@ -200,6 +200,8 @@ module.exports = function (server, router, ss, oauth) {
                 res.send({lead,event});
               }
             });      
+          }else{
+            res.send({lead});
           }
         }
       });

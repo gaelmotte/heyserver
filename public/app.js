@@ -249,15 +249,21 @@ $(function () {
       //data: form.serialize()
     }).done(data => {
       console.log(data)
-      //format display
-      let options = data.slots.map(elem => {
-        let option = document.createElement("option");
-        option.value=elem.userId+"_"+elem.starttime+"_"+elem.endtime;
-        option.innerHTML = elem.starttime+" with "+elem.userFirstName;
-        return option;
-      })
-      //Append to #demoSlot
-      $("#demoSlot").append(options);
+      if(data.slots.length != 0){
+        //format display
+        let options = data.slots.map(elem => {
+          let option = document.createElement("option");
+          option.value=elem.userId+"_"+elem.starttime+"_"+elem.endtime;
+          option.innerHTML = elem.starttime+" with "+elem.userFirstName;
+          return option;
+        })
+        //Append to #demoSlot
+        $("#demoSlot").append(options);
+      }else{
+        alert("No slot available in a forseable future. You can still post a message though.");
+      }
+
+      
 
     }).fail(data => {
       console.log(data)

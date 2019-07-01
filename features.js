@@ -156,11 +156,11 @@ module.exports = function (server, router, ss, oauth) {
       Company: req.body.leadCompany,
       Description: req.body.leadDescription
     };
-
+    let [OwnerId,StartDateTime,EndDateTime] = req.body.demoSlot.split("_");
     let event = {
-      OwnerId : "",
-      StartDateTime : "",
-      EndDateTime:"",
+      OwnerId : OwnerId,
+      StartDateTime : StartDateTime,
+      EndDateTime:EndDateTime,
       WhatId : null
     }
 

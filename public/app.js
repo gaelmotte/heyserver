@@ -3,6 +3,7 @@
 */
 
 let appState = {}
+let moment = require('moment');
 
 $(function () {
 
@@ -254,7 +255,7 @@ $(function () {
         let options = data.slots.map(elem => {
           let option = document.createElement("option");
           option.value=elem.userId+"_"+elem.starttime+"_"+elem.endtime;
-          option.innerHTML = elem.starttime+" with "+elem.userFirstName;
+          option.innerHTML = moment(elem.starttime).format("MMMM Do YYYY, hh:mm:ss")+" with "+elem.userFirstName;
           return option;
         })
         //Append to #demoSlot

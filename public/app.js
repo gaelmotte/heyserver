@@ -3,7 +3,6 @@
 */
 
 let appState = {}
-let moment = require('moment');
 
 $(function () {
 
